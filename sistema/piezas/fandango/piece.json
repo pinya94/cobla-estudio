@@ -1,0 +1,108 @@
+{
+ "title": "Fandango Tortosí",
+ "me": "tenor_2",
+ "total_measures": 123,
+ "parts": [
+  {
+   "id": "flabiol",
+   "pdf": "flabiol.pdf",
+   "name": "Flabiol",
+   "short": "flabiol",
+   "program": 72,
+   "clef": "G",
+   "timbre": "flauta",
+   "role": "melodia"
+  },
+  {
+   "id": "tible",
+   "pdf": "tible.pdf",
+   "name": "Tarota tible",
+   "short": "tible",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tenor_1",
+   "pdf": "tenor_1.pdf",
+   "name": "Tarota tenor 1",
+   "short": "tenor 1",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tenor_2",
+   "pdf": "tenor_2.pdf",
+   "name": "Tarota tenor 2",
+   "short": "tenor 2",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "fagot",
+   "pdf": "fagot.pdf",
+   "name": "Fagot",
+   "short": "fagot",
+   "program": 70,
+   "clef": "F",
+   "timbre": "fagot",
+   "role": "base"
+  },
+  {
+   "id": "trombo",
+   "pdf": "trombo.pdf",
+   "name": "Trombó",
+   "short": "trombón",
+   "program": 57,
+   "clef": "F",
+   "timbre": "metal",
+   "role": "base"
+  }
+ ],
+ "sections": [
+  {
+   "start": 1,
+   "name": "Marca 1",
+   "bpm": 100,
+   "beat": 1.5
+  },
+  {
+   "start": 21,
+   "name": "Marca 2",
+   "bpm": 100,
+   "beat": 1.5
+  },
+  {
+   "start": 41,
+   "name": "Marca 3",
+   "bpm": 100,
+   "beat": 1.5
+  },
+  {
+   "start": 61,
+   "name": "Marca 4",
+   "bpm": 100,
+   "beat": 1.5
+  },
+  {
+   "start": 82,
+   "name": "Marca 7",
+   "bpm": 100,
+   "beat": 1.5
+  },
+  {
+   "start": 102,
+   "name": "Marca 8",
+   "bpm": 100,
+   "beat": 1.5
+  }
+ ],
+ "overrides": {},
+ "subtitle": "Tradicional",
+ "composer": "Arr. Ferran Martinez Palou / Esteve Bou"
+}

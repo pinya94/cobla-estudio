@@ -1,0 +1,123 @@
+{
+ "title": "Tradi-mix",
+ "me": "tarota_do",
+ "total_measures": 264,
+ "parts": [
+  {
+   "id": "sac",
+   "pdf": "sac.pdf",
+   "name": "Sac de gemecs",
+   "short": "sac",
+   "program": 109,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "melodia"
+  },
+  {
+   "id": "tarota_do",
+   "pdf": "tarota_do.pdf",
+   "name": "Tarota Do",
+   "short": "tarota Do",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tarota_fa",
+   "pdf": "tarota_fa.pdf",
+   "name": "Tarota Fa",
+   "short": "tarota Fa",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "fagot",
+   "pdf": "fagot.pdf",
+   "name": "Fagot",
+   "short": "fagot",
+   "program": 70,
+   "clef": "F",
+   "timbre": "fagot",
+   "role": "base"
+  },
+  {
+   "id": "trombo",
+   "pdf": "trombo.pdf",
+   "name": "Trombó",
+   "short": "trombón",
+   "program": 57,
+   "clef": "F",
+   "timbre": "metal",
+   "role": "base"
+  }
+ ],
+ "sections": [
+  {
+   "start": 1,
+   "name": "Intro",
+   "bpm": 100,
+   "beat": 1
+  },
+  {
+   "start": 5,
+   "name": "Pastorets",
+   "bpm": 100,
+   "beat": 1
+  },
+  {
+   "start": 27,
+   "name": "Ball de nanos de Tarragona",
+   "bpm": 100,
+   "beat": 1
+  },
+  {
+   "start": 41,
+   "name": "Ball de panderos de Vilafranca",
+   "bpm": 70,
+   "beat": 1.5
+  },
+  {
+   "start": 119,
+   "name": "Toc de Castell",
+   "bpm": 90,
+   "beat": 1
+  },
+  {
+   "start": 163,
+   "name": "Matinades",
+   "bpm": 66,
+   "beat": 1.5
+  },
+  {
+   "start": 183,
+   "name": "Rave",
+   "bpm": 130,
+   "beat": 1
+  },
+  {
+   "start": 201,
+   "name": "Cucafera de Tarragona",
+   "bpm": 100,
+   "beat": 1
+  },
+  {
+   "start": 227,
+   "name": "Interludi trapós",
+   "bpm": 100,
+   "beat": 1
+  },
+  {
+   "start": 244,
+   "name": "Cucafera de Tarragona 2",
+   "bpm": 100,
+   "beat": 1
+  }
+ ],
+ "overrides": {},
+ "site_note": "Sin flabiol (su particella lleva el tamborí y no se ha podido leer).",
+ "subtitle": "Cobla la Mitja Lluna",
+ "composer": "Sergi Masalias"
+}

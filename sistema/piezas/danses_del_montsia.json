@@ -1,0 +1,30 @@
+{
+  "title": "Danses del Montsià",
+  "subtitle": "Dia de festa al Montsià (EDR)",
+  "composer": "Ferran Martinez Palou",
+  "me": "tenor_2",
+  "total_measures": 407,
+  "parts": [
+    {"id": "flabiol", "pdf": "flabiol.pdf", "name": "Flabiol", "short": "flabiol", "program": 72, "clef": "G", "timbre": "flauta", "role": "melodia"},
+    {"id": "tible", "pdf": "tible.pdf", "name": "Tarota tible", "short": "tible", "program": 68, "clef": "G", "timbre": "lengueta", "role": "companeros"},
+    {"id": "tenor_1", "pdf": "tenor_1.pdf", "name": "Tarota tenor 1", "short": "tenor 1", "program": 68, "clef": "G", "timbre": "lengueta", "role": "companeros"},
+    {"id": "tenor_2", "pdf": "tenor_2.pdf", "name": "Tarota tenor 2", "short": "tenor 2", "program": 68, "clef": "G", "timbre": "lengueta", "role": "yo"},
+    {"id": "fagot", "pdf": "fagot.pdf", "name": "Fagot", "short": "fagot", "program": 70, "clef": "F", "timbre": "fagot", "role": "base"},
+    {"id": "trombo", "pdf": "trombo.pdf", "name": "Trombó", "short": "trombón", "program": 57, "clef": "F", "timbre": "metal", "role": "base"}
+  ],
+  "sections": [
+    {"start": 1, "name": "Introducció", "bpm": 66, "beat": 1.5},
+    {"start": 45, "name": "Pas processional", "bpm": 96, "beat": 1},
+    {"start": 80, "name": "Jota de la Sènia", "bpm": 66, "beat": 1.5},
+    {"start": 116, "name": "Jota de rondalla", "bpm": 66, "beat": 1.5},
+    {"start": 140, "name": "Dansa de la Sènia", "bpm": 60, "beat": 1.5},
+    {"start": 172, "name": "Jota de rondalla (2)", "bpm": 66, "beat": 1.5},
+    {"start": 208, "name": "El mantón de manila", "bpm": 92, "beat": 1},
+    {"start": 242, "name": "Jota vella d'Alcanar", "bpm": 66, "beat": 1.5},
+    {"start": 258, "name": "Copla", "bpm": 66, "beat": 1.5},
+    {"start": 289, "name": "Copla (2)", "bpm": 66, "beat": 1.5},
+    {"start": 317, "name": "Variació", "bpm": 66, "beat": 1.5},
+    {"start": 336, "name": "Vals jota", "bpm": 66, "beat": 1.5}
+  ],
+  "overrides": {"tenor_2:34": [[null, "1/2"], [67, "1/2"], [65, "1/2"]], "tenor_2:315": [[null, "1/2"], [65, "1"]]}
+}

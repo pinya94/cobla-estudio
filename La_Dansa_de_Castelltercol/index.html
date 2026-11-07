@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estudio de partitura</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#1f1d1a;--mute:#6f6a62;--line:#e4ded4;--acc:#b5462b;--ok:#2f9e5b;--warn:#e0a100;--bad:#d63b3b;--t1:#1f6fd1;--tb:#1a9a4a;--tr:#8a3fc7;--fl:#0e9aa7;--fg:#9a5b1a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+h1{font-size:16px;margin:0 8px 0 0;white-space:nowrap}
+h1 small{display:block;font-weight:400;color:var(--mute);font-size:12px}
+select,button,input{font:inherit}
+select{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;max-width:260px}
+button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 14px;cursor:pointer;touch-action:manipulation}
+button:hover{border-color:#cfc6b8}
+button.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600;min-width:110px}
+button.on{background:#1f1d1a;color:#fff;border-color:#1f1d1a}
+.phases{display:flex;gap:6px;flex-wrap:wrap}
+.phase{display:flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px}
+.phase b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#eee;font-size:12px}
+.phase.sel{border-color:var(--acc);box-shadow:0 0 0 2px #b5462b33}
+.phase.sel b{background:var(--acc);color:#fff}
+.phase.done b{background:var(--ok);color:#fff}
+.tempo{display:flex;align-items:center;gap:8px}
+.tempo input{width:130px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;padding:14px}
+@media (max-width:1000px){main{grid-template-columns:1fr}}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;position:relative}
+.pagewrap{position:relative;width:100%}
+.pagewrap img{width:100%;display:block;user-select:none;-webkit-user-drag:none}
+.pagewrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.pagenav{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 8px;color:var(--mute);font-size:13px}
+aside{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.card h2{font-size:14px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.big{font-size:30px;font-weight:700}
+.instr{font-size:14px}
+.notes{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}
+.notes li{padding:6px 8px;border-left:4px solid #999;background:#faf8f5;border-radius:6px;font-size:13.5px;cursor:pointer}
+.notes li .m{font-weight:700;margin-right:6px}
+.k-entrada{border-color:var(--bad)!important}.k-dificil{border-color:var(--warn)!important}.k-solo{border-color:var(--bad)!important}
+.k-propia{border-color:#777!important}
+.fb{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px;max-height:260px;overflow:auto;font-size:13.5px}
+.fb li{padding:5px 8px;border-radius:6px;cursor:pointer}
+.fb .bad{background:#fdecec}.fb .warn{background:#fff6dc}.fb .ok{background:#e9f7ef}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{font-size:12px;padding:2px 8px;border-radius:999px;background:#eee}
+.meter{height:10px;background:#eee;border-radius:6px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ok);width:0}
+.mix{display:grid;grid-template-columns:110px 1fr 40px;gap:6px 10px;align-items:center;font-size:13.5px}
+.mix input{width:100%}
+dialog{border:none;border-radius:16px;max-width:560px;width:92%;padding:18px 20px;box-shadow:0 20px 60px #0004}
+dialog::backdrop{background:#0005}
+.status{font-size:13px;color:var(--mute)}
+.loopinfo{font-size:13px}
+.miclvl{width:80px;height:8px;background:#eee;border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle}
+.miclvl i{display:block;height:100%;background:var(--ok);width:0}
+.hint{font-size:12.5px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+  <a href="../index.html" style="text-decoration:none;font-size:20px" title="Todas las piezas">◀</a>
+  <h1 id="ttl">Partitura<small id="sub">estudio progresivo</small></h1>
+  <select id="vozSel" aria-label="Tu voz" title="Tu voz"></select>
+  <select id="secSel" aria-label="Sección"></select>
+  <div class="phases" id="phases"></div>
+  <div class="tempo"><span>Tempo</span><input type="range" id="tempo" min="40" max="110" step="5" value="60"><b id="tempoLbl">60%</b></div>
+  <button class="primary" id="playBtn">▶ Empezar</button>
+  <button id="loopBtn" title="Repetir el tramo en bucle">🔁 Bucle</button>
+  <button id="setBtn">⚙ Ajustes</button>
+</header>
+<main>
+  <section class="sheet">
+    <div class="pagenav"><button id="prevPg">◀</button><span id="pgLbl">Página 1 / 3 · toca un compás para empezar ahí; toca otro para marcar el final del tramo</span><button id="nextPg">▶</button></div>
+    <div class="pagewrap" id="pagewrap"><img id="pgImg" alt="Partitura"><canvas id="ov"></canvas></div>
+  </section>
+  <aside>
+    <div class="card">
+      <h2 id="phaseTitle">Fase</h2>
+      <div class="instr" id="phaseInstr"></div>
+      <div class="row" style="margin-top:8px"><span class="loopinfo" id="loopInfo"></span></div>
+      <div class="row" style="margin-top:6px"><span class="status" id="status">Listo.</span> <span class="miclvl" title="Nivel del micro"><i id="micLvl"></i></span></div>
+    </div>
+    <div class="card" id="resCard" style="display:none">
+      <h2>Resultado del último intento</h2>
+      <div class="row"><span class="big" id="score">–</span><span class="hint" id="scoreHint"></span></div>
+      <div class="meter" style="margin:6px 0 10px"><i id="scoreBar"></i></div>
+      <ul class="fb" id="fb"></ul>
+    </div>
+    <div class="card">
+      <h2>En esta sección</h2>
+      <ul class="notes" id="secNotes"></ul>
+    </div>
+    <div class="card">
+      <h2>Tu progreso</h2>
+      <div id="progress" class="hint"></div>
+    </div>
+    <div class="card">
+      <h2>Descargas</h2>
+      <div class="row" id="dl"></div>
+      <p class="hint">El PDF anotado es tu particella con: con quién vas en cada parte, entradas y pasajes difíciles.</p>
+    </div>
+  </aside>
+</main>
+
+<dialog id="settings">
+  <h3 style="margin-top:0">Ajustes</h3>
+  <div class="mix" id="mixer"></div>
+  <hr style="border:none;border-top:1px solid #eee;margin:14px 0">
+  <div class="row"><label><input type="checkbox" id="clickChk" checked> Metrónomo</label>
+  <label><input type="checkbox" id="countChk" checked> Compás de entrada (cuenta)</label>
+  <label><input type="checkbox" id="octChk" checked> No contar errores de octava</label></div>
+  <div class="row" style="margin-top:10px">Transposición del micro:
+    <select id="transSel"></select><span class="hint">Si tu instrumento suena distinto a lo escrito.</span></div>
+  <div class="row" style="margin-top:10px">Retardo del micro: <b id="latLbl">120 ms</b>
+    <input type="range" id="lat" min="0" max="400" step="10" value="120">
+    <button id="calBtn">Calibrar</button></div>
+  <p class="hint">Calibrar: suenan 6 golpes; toca una nota corta justo con cada golpe. Usa <b>auriculares</b> siempre que uses el micro, para que la app no se oiga a sí misma.</p>
+  <div class="row" style="justify-content:flex-end"><button id="closeSet" class="primary">Hecho</button></div>
+</dialog>
+
+<script>try{ if(localStorage.getItem("cpm_ok")!=="1") location.replace("../index.html"); }catch(e){}</script>
+<script src="data.js"></script>
+<script>
+(function(){
+  const qs=new URLSearchParams(location.search); const K="voz_"+DATA.config.title;
+  let v=qs.get("v"); if(!v){ try{ v=localStorage.getItem(K); }catch(e){} }
+  if(!v || !DATA.voices[v]) v=DATA.config.me;
+  try{ localStorage.setItem(K,v); }catch(e){}
+  const V=DATA.voices[v];
+  DATA.config.me=v; DATA.boxes=V.boxes; DATA.pageW=V.pageW; DATA.pageH=V.pageH;
+  DATA.analysis={sections:DATA.sections, notes:V.notes};
+  window.PAGES=[...Array(V.pages)].map((_,i)=>`img/${v}-${i+1}.jpg`);
+})();
+</script>
+<script>
+"use strict";
+// ---------- model ----------
+const CFG = DATA.config, ME = CFG.me;
+const PAGES = window.PAGES;
+const OFF = DATA.offset||0; const C = n => n + OFF;
+const NAMES = {}; CFG.parts.forEach(p=>NAMES[p.id]= p.id===ME? p.name+" (tú)" : p.name);
+const SHORTS = {}; CFG.parts.forEach(p=>SHORTS[p.id]=p.short);
+const SECT_TEMPO = CFG.sections.map(s=>[s.name, s.bpm||80, s.beat||1]); // beat bpm at 100% and beat length in quarters
+const ROLE = r => CFG.parts.filter(p=>p.role===r && p.id!==ME).map(p=>p.id);
+const OTHERS = CFG.parts.filter(p=>p.id!==ME).map(p=>p.id);
+const PCOL = ["#1f6fd1","#1a9a4a","#8a3fc7","#0e9aa7","#9a5b1a","#c2185b","#5d7a00","#00838f"];
+const COLOF = {}; OTHERS.forEach((id,i)=>COLOF[id]=PCOL[i%PCOL.length]);
+document.title = "Estudio · "+CFG.title+" · "+(CFG.parts.find(p=>p.id===ME)||{}).name;
+const M = DATA.measures.map(m => ({n:m.n, cap: frac(m.cap), key:m.key}));
+function frac(s){ if(typeof s==="number") return s; const [a,b]=String(s).split("/").map(Number); return b? a/b : a; }
+const SECTIONS = DATA.analysis.sections;
+let q=0; M.forEach(m=>{ m.q0=q; q+=m.cap; m.sec = SECTIONS.findIndex(s=>m.n>=s.start && m.n<=s.end); });
+const PARTS = {}; DATA.parts.forEach(p=>PARTS[p.id]=p);
+const BOX = DATA.boxes; const PW = DATA.pageW||612, PH = DATA.pageH||792; // n -> {page,x0,x1,top,bot} in PDF points
+
+function mixOf(ids,v){ const m={}; ids.forEach(i=>m[i]=v); return m; }
+const BASE = ROLE("base"), MATES = ROLE("companeros");
+const PHASES = [
+  {t:"Escucha tu voz", mic:false, mix:{[ME]:1}, click:false, tempo:70,
+   d:"Solo suena tu parte. Sigue el cursor con la vista y canta o digita mentalmente. Fíjate en las entradas (▼) y en los pasajes difíciles."},
+  {t:"Tú solo, lento", mic:true, mix:{[ME]:0.25}, click:true, tempo:60,
+   d:"Toca tú con el metrónomo (tu voz suena flojita de guía). La app te escucha y marca cada compás: verde bien, amarillo tiempo/afinación, rojo nota equivocada o no se oye. Cuando pases del 85 %, sube el tempo."},
+  {t:"Con la base", mic:true, mix:mixOf(BASE,0.8), click:true, tempo:80,
+   d:"Ahora suena la base ("+BASE.map(i=>SHORTS[i]).join(" y ")+"): el bajo y el pulso. Tú tocas encima. Objetivo: no correr ni frenar respecto al bajo."},
+  {t:"Con tus compañeros", mic:true, mix:Object.assign(mixOf(BASE,0.6), mixOf(MATES,0.85)), click:false, tempo:90,
+   d:"Añadimos a "+MATES.map(i=>SHORTS[i]).join(" y ")+", que son con quien más cuadras (mira «En esta sección»). Escucha si vas en terceras o al unísono con ellos."},
+  {t:"Todo el grupo menos tú", mic:true, mix:mixOf(OTHERS,0.8), click:false, tempo:100,
+   d:"Ensayo completo: suena toda la cobla y tú pones tu voz. Esto es lo más parecido a tocar con ellos."}
+];
+
+// ---------- state & storage ----------
+const SKEY = (CFG.title+"_"+ME).replace(/[^A-Za-z0-9]+/g,"_")+"_";
+const store = { get(k,d){ try{ const v=localStorage.getItem(SKEY+k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+                set(k,v){ try{ localStorage.setItem(SKEY+k, JSON.stringify(v)); }catch(e){} } };
+const S = { sec: store.get("sec",0), phase: store.get("phase",0), tempo: 60, loop: false, page:1,
+  from:null, to:null, playing:false, latency: store.get("lat",120), trans: store.get("trans",0), oct: store.get("oct",true),
+  vol: store.get("vol",{}), clickOn:true, countIn:true, results:{} };
+const progress = store.get("progress",{}); // key sec|phase -> {best, tempo}
+
+// ---------- UI refs ----------
+const $ = id => document.getElementById(id);
+const img = $("pgImg"), ov = $("ov"), ctx2 = ov.getContext("2d");
+
+function initUI(){
+  CFG.parts.filter(p=>DATA.voices[p.id]).forEach(p=>{ const o=document.createElement("option"); o.value=p.id; o.textContent="Mi voz: "+p.name; $("vozSel").appendChild(o); });
+  $("vozSel").value=ME; $("vozSel").onchange=e=>{ location.search="?v="+e.target.value; };
+  $("dl").innerHTML=`<a href="pdf/${ME}.pdf" target="_blank"><button>📄 PDF anotado</button></a> <a href="${DATA.files.xml}" download><button>🎼 MusicXML</button></a> <a href="${DATA.files.mid}" download><button>🎹 MIDI</button></a>`;
+  $("ttl").firstChild.textContent=CFG.title; $("sub").textContent=(CFG.parts.find(p=>p.id===ME)||{}).name+" · estudio progresivo";
+  SECTIONS.forEach((s,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=`${i+1}. ${s.name} (c.${C(s.start)}-${C(s.end)})`; $("secSel").appendChild(o); });
+  $("secSel").value=S.sec;
+  $("secSel").onchange=()=>{ S.sec=+$("secSel").value; store.set("sec",S.sec); S.from=null;S.to=null; S.results={}; gotoMeasure(SECTIONS[S.sec].start); refresh(); };
+  PHASES.forEach((p,i)=>{ const b=document.createElement("div"); b.className="phase"; b.innerHTML=`<b>${i+1}</b>${p.t}`; b.onclick=()=>setPhase(i); $("phases").appendChild(b); });
+  $("tempo").oninput=()=>{ S.tempo=+$("tempo").value; $("tempoLbl").textContent=S.tempo+"%"; };
+  $("playBtn").onclick=()=> S.playing? stop(true) : start();
+  $("loopBtn").onclick=()=>{ S.loop=!S.loop; $("loopBtn").classList.toggle("on",S.loop); };
+  $("prevPg").onclick=()=>showPage(Math.max(1,S.page-1));
+  $("nextPg").onclick=()=>showPage(Math.min(PAGES.length,S.page+1));
+  $("setBtn").onclick=()=>{ buildMixer(); $("settings").showModal(); };
+  $("closeSet").onclick=()=>$("settings").close();
+  $("clickChk").onchange=e=>S.clickOn=e.target.checked;
+  $("countChk").onchange=e=>S.countIn=e.target.checked;
+  $("octChk").checked=S.oct; $("octChk").onchange=e=>{S.oct=e.target.checked; store.set("oct",S.oct);};
+  for(let t=-12;t<=12;t++){ const o=document.createElement("option"); o.value=t; o.textContent=(t>0?"+":"")+t+" semitonos"; $("transSel").appendChild(o); }
+  $("transSel").value=S.trans; $("transSel").onchange=e=>{S.trans=+e.target.value; store.set("trans",S.trans);};
+  $("lat").value=S.latency; $("latLbl").textContent=S.latency+" ms";
+  $("lat").oninput=e=>{S.latency=+e.target.value; $("latLbl").textContent=S.latency+" ms"; store.set("lat",S.latency);};
+  $("calBtn").onclick=calibrate;
+  ov.addEventListener("click", onSheetClick);
+  window.addEventListener("resize", draw);
+  setPhase(S.phase);
+  gotoMeasure(SECTIONS[S.sec].start);
+}
+function setPhase(i){
+  S.phase=i; store.set("phase",i);
+  const p=PHASES[i];
+  S.tempo=p.tempo; $("tempo").value=S.tempo; $("tempoLbl").textContent=S.tempo+"%";
+  S.clickOn=p.click; $("clickChk").checked=p.click;
+  S.results={};
+  refresh();
+}
+function rangeNow(){
+  const s=SECTIONS[S.sec];
+  let a=S.from ?? s.start, b=S.to ?? s.end;
+  if(b<a) [a,b]=[b,a];
+  return [a,b];
+}
+function refresh(){
+  [...$("phases").children].forEach((el,i)=>{ el.classList.toggle("sel",i===S.phase); el.classList.toggle("done", (progress[S.sec+"|"+i]||{}).best>=85); });
+  const p=PHASES[S.phase];
+  $("phaseTitle").textContent=`Fase ${S.phase+1} · ${p.t}`;
+  $("phaseInstr").textContent=p.d;
+  const [a,b]=rangeNow();
+  $("loopInfo").innerHTML=`Tramo: <b>c. ${C(a)}–${C(b)}</b> ${S.from!=null?'<button id="resetRange" style="padding:3px 8px;font-size:12px">sección entera</button>':''}`;
+  const rr=$("resetRange"); if(rr) rr.onclick=()=>{S.from=null;S.to=null;refresh();draw();};
+  // section notes
+  const s=SECTIONS[S.sec], ul=$("secNotes"); ul.innerHTML="";
+  const items=DATA.analysis.notes.filter(n=>n.start>=s.start && n.start<=s.end);
+  if(!items.length){ ul.innerHTML='<li>Descansas toda esta sección. Cuenta compases y escucha.</li>'; }
+  items.forEach(n=>{ const li=document.createElement("li"); li.className="k-"+n.kind;
+    const col={con:"", propia:"", solo:"", entrada:"", dificil:""};
+    li.innerHTML=`<span class="m">c.${C(n.start)}${n.end!==n.start?"–"+C(n.end):""}</span>${n.text}`;
+    if(n.kind==="con"){ const k=OTHERS.find(id=>n.text.startsWith("Vas con "+SHORTS[id]+" ")); if(k) li.style.borderColor=COLOF[k]; }
+    li.onclick=()=>{ S.from=Math.max(s.start,n.start-1); S.to=Math.min(s.end,n.end+1); gotoMeasure(S.from); refresh(); };
+    ul.appendChild(li); });
+  // progress
+  const rows=SECTIONS.map((s,si)=>{ const cells=PHASES.map((p,pi)=>{ const r=progress[si+"|"+pi]; return r? `<span class="pill" title="Fase ${pi+1}: ${r.best}% a ${r.tempo}%" style="background:${r.best>=85?'#d7f0e1':'#fbeed0'}">F${pi+1} ${r.best}%</span>`:""; }).join(" ");
+    return cells? `<div style="margin:3px 0"><b>${s.name}</b> ${cells}</div>`:""; }).join("");
+  $("progress").innerHTML = rows || "Aún no hay intentos con micro. Empieza por la fase 1 de la Introducció.";
+  draw();
+}
+
+// ---------- sheet drawing ----------
+function showPage(p){ S.page=p; img.src=PAGES[p-1]; $("pgLbl").textContent=`Página ${p} / ${PAGES.length} · toca un compás para empezar ahí; toca otro para marcar el final`; }
+img.onload=draw;
+function gotoMeasure(n){ const b=BOX[n]; if(b && (b.page!==S.page || !img.getAttribute('src'))) showPage(b.page); else draw(); }
+function boxRect(n){
+  const b=BOX[n]; if(!b) return null;
+  const sx=ov.width/PW, sy=ov.height/PH;
+  const x0=(b.x0==null? b.x1-45 : b.x0);
+  return {x:x0*sx, y:(b.top-16)*sy, w:(b.x1-x0)*sx, h:(b.bot-b.top+30)*sy, page:b.page};
+}
+let cursorM=null;
+function draw(){
+  const r=img.getBoundingClientRect(); const dpr=window.devicePixelRatio||1;
+  ov.width=Math.round(r.width*dpr); ov.height=Math.round(r.height*dpr);
+  ctx2.clearRect(0,0,ov.width,ov.height);
+  const [a,b]=rangeNow();
+  for(let n=a;n<=b;n++){ const R=boxRect(n); if(!R||R.page!==S.page) continue;
+    ctx2.fillStyle="rgba(181,70,43,0.06)"; ctx2.fillRect(R.x,R.y,R.w,R.h);
+    const res=S.results[n];
+    if(res){ ctx2.fillStyle= res==="ok"?"rgba(47,158,91,.22)": res==="warn"?"rgba(224,161,0,.25)":"rgba(214,59,59,.22)"; ctx2.fillRect(R.x,R.y,R.w,R.h); }
+  }
+  if(cursorM){ const R=boxRect(cursorM); if(R && R.page===S.page){ ctx2.strokeStyle="#b5462b"; ctx2.lineWidth=3*(window.devicePixelRatio||1); ctx2.strokeRect(R.x+1,R.y+1,R.w-2,R.h-2); } }
+}
+function onSheetClick(e){
+  if(S.playing) return;
+  const r=ov.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width*PW, y=(e.clientY-r.top)/r.height*PH;
+  let hit=null;
+  for(const [n,b] of Object.entries(BOX)){ if(b.page!==S.page) continue; const x0=b.x0==null?b.x1-45:b.x0; if(x>=x0&&x<=b.x1&&y>=b.top-18&&y<=b.bot+14){hit=+n;break;} }
+  if(!hit) return;
+  const s=SECTIONS[M[hit-1].sec];
+  if(M[hit-1].sec!==S.sec){ S.sec=M[hit-1].sec; $("secSel").value=S.sec; S.from=hit; S.to=null; }
+  else if(S.from==null || S.to!=null){ S.from=hit; S.to=null; }
+  else { S.to=hit; if(S.to<S.from){ const t=S.from; S.from=S.to; S.to=t; } }
+  refresh();
+}
+
+// ---------- timing ----------
+function spq(n){ const t=SECT_TEMPO[M[n-1].sec]||SECT_TEMPO[0]; return 60/(t[1]*t[2])/(S.tempo/100); }
+function timeline(a,b){ // returns measure start times (s, relative) and end
+  const st={}; let t=0; for(let n=a;n<=b;n++){ st[n]=t; t+=M[n-1].cap*spq(n); } return {st,end:t};
+}
+
+// ---------- audio ----------
+let AC=null, master=null;
+function ensureAudio(){ if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=0.6; master.connect(AC.destination);} if(AC.state==="suspended") AC.resume(); }
+const TIMBRES = {
+  flauta:{type:"triangle", f:5000, q:0.7, g:0.18, att:0.01},
+  lengueta:{type:"sawtooth", f:2200, q:3, g:0.10, att:0.015},
+  fagot:{type:"square", f:900, q:1, g:0.08, att:0.02},
+  metal:{type:"sawtooth", f:1100, q:1, g:0.10, att:0.04},
+  cuerda:{type:"sawtooth", f:1800, q:0.8, g:0.09, att:0.03},
+  voz:{type:"triangle", f:2500, q:1, g:0.16, att:0.05},
+  bajo:{type:"triangle", f:700, q:1, g:0.2, att:0.01}
+};
+const TIMBRE = {}; CFG.parts.forEach(p=>TIMBRE[p.id]=Object.assign({}, TIMBRES[p.timbre]||TIMBRES.lengueta));
+if(TIMBRE[ME]) TIMBRE[ME].g*=1.2;
+function playNote(part, midi, t, d, vol){
+  const tb=TIMBRE[part]; const f=440*Math.pow(2,(midi-69)/12);
+  const o=AC.createOscillator(); o.type=tb.type; o.frequency.value=f;
+  const lfo=AC.createOscillator(), lg=AC.createGain(); lfo.frequency.value=5.2; lg.gain.value=f*0.004; lfo.connect(lg); lg.connect(o.frequency);
+  const fl=AC.createBiquadFilter(); fl.type="lowpass"; fl.frequency.value=tb.f; fl.Q.value=tb.q;
+  const g=AC.createGain(); const peak=tb.g*vol; const dd=Math.max(0.05,d*0.92);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(peak,t+tb.att); g.gain.setValueAtTime(peak*0.85,t+Math.max(tb.att,dd-0.04)); g.gain.linearRampToValueAtTime(0,t+dd);
+  o.connect(fl); fl.connect(g); g.connect(master);
+  o.start(t); lfo.start(t); o.stop(t+dd+0.02); lfo.stop(t+dd+0.02);
+}
+function click(t, accent, vol=1){
+  const o=AC.createOscillator(), g=AC.createGain(); o.frequency.value=accent?1600:1000;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.35*vol,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+0.06);
+}
+function mixFor(){ const p=PHASES[S.phase]; const m={}; Object.keys(TIMBRE).forEach(k=>{ const base=p.mix[k]||0; const user=S.vol[k]; m[k]= user==null? base : base>0? user : 0; }); return m; }
+
+let sched=null, startAt=0, events=[], evIdx=0, runRange=null, rafId=null, countLen=0;
+function buildEvents(a,b){
+  const {st,end}=timeline(a,b); const mix=mixFor(); const ev=[];
+  for(const p of DATA.parts){ const v=mix[p.id]; if(!v) continue;
+    for(const [s,d,midi,mn] of p.notes){ if(mn<a||mn>b) continue;
+      const qm=M[mn-1].q0; const t=st[mn]+(s-qm)*spq(mn); ev.push({t, d:d*spq(mn), part:p.id, midi, vol:v}); } }
+  if(S.clickOn){ for(let n=a;n<=b;n++){ const tq=SECT_TEMPO[M[n-1].sec]; const beatQ=tq[2]; const nb=Math.round(M[n-1].cap/beatQ*1000)/1000;
+      for(let k=0;k<nb;k++) ev.push({t:st[n]+k*beatQ*spq(n), click:true, accent:k===0}); } }
+  ev.sort((x,y)=>x.t-y.t); return {ev,st,end};
+}
+async function start(){
+  ensureAudio();
+  const p=PHASES[S.phase];
+  if(p.mic){ const ok=await startMic(); if(!ok){ $("status").textContent="Sin micro: puedes practicar igual, pero no habrá corrección."; } }
+  const [a,b]=rangeNow(); runRange=[a,b];
+  const built=buildEvents(a,b); events=built.ev; evIdx=0; S.st=built.st; S.end=built.end;
+  // count-in: one measure of clicks
+  const tq=SECT_TEMPO[M[a-1].sec]; const beatQ=tq[2]; const nb=Math.max(2,Math.round(M[a-1].cap/beatQ)); const beatS=beatQ*spq(a);
+  countLen = S.countIn? nb*beatS : 0;
+  startAt=AC.currentTime+0.25+countLen;
+  if(S.countIn) for(let k=0;k<nb;k++) click(startAt-countLen+k*beatS, k===0, 1);
+  S.playing=true; $("playBtn").textContent="⏹ Parar"; $("status").textContent= p.mic? "Escuchando… toca con la cuenta." : "Reproduciendo…";
+  micFrames=[]; S.results={};
+  sched=setInterval(tick,25); tick();
+  rafId=requestAnimationFrame(follow);
+}
+function tick(){
+  const now=AC.currentTime;
+  while(evIdx<events.length && startAt+events[evIdx].t < now+0.2){ const e=events[evIdx++]; const t=startAt+e.t;
+    if(e.click) click(t,e.accent,0.8); else playNote(e.part,e.midi,t,e.d,e.vol); }
+  if(now > startAt+S.end+0.3){ finishRun(); }
+}
+function follow(){
+  if(!S.playing) return;
+  const t=AC.currentTime-startAt; const [a,b]=runRange; let cur=a;
+  for(let n=a;n<=b;n++){ if(S.st[n]<=t) cur=n; }
+  if(cur!==cursorM){ cursorM=cur; const bx=BOX[cur]; if(bx && bx.page!==S.page) showPage(bx.page); draw(); }
+  if(micOn) sampleMic();
+  rafId=requestAnimationFrame(follow);
+}
+function finishRun(){
+  const wasMic = micOn && PHASES[S.phase].mic;
+  stop(false);
+  if(wasMic) evaluate();
+  if(S.loop){ setTimeout(()=>{ if(!S.playing) start(); }, wasMic? 1800: 400); }
+}
+function stop(user){
+  clearInterval(sched); sched=null; S.playing=false; cancelAnimationFrame(rafId);
+  $("playBtn").textContent="▶ Empezar";
+  if(user){ $("status").textContent="Parado."; if(master){ master.gain.cancelScheduledValues(AC.currentTime); master.disconnect(); master=AC.createGain(); master.gain.value=0.6; master.connect(AC.destination);} }
+  cursorM=null; draw();
+}
+
+// ---------- microphone & pitch ----------
+let micOn=false, analyser=null, micBuf=null, micFrames=[];
+async function startMic(){
+  if(micOn) return true;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const src=AC.createMediaStreamSource(stream); analyser=AC.createAnalyser(); analyser.fftSize=2048; src.connect(analyser);
+    micBuf=new Float32Array(analyser.fftSize); micOn=true; return true;
+  }catch(e){ console.warn(e); return false; }
+}
+function detectPitch(buf, sr){
+  let rms=0; for(let i=0;i<buf.length;i++) rms+=buf[i]*buf[i]; rms=Math.sqrt(rms/buf.length);
+  if(rms<0.01) return {rms, f:0};
+  // YIN-style difference function
+  const half=buf.length>>1, d=new Float32Array(half);
+  const minLag=Math.floor(sr/1400), maxLag=Math.min(half-1, Math.floor(sr/110));
+  for(let lag=minLag;lag<=maxLag;lag++){ let s=0; for(let i=0;i<half;i++){ const x=buf[i]-buf[i+lag]; s+=x*x; } d[lag]=s; }
+  let run=0; const cm=new Float32Array(half);
+  for(let lag=1;lag<=maxLag;lag++){ run+=d[lag]||0; cm[lag]= lag<minLag?1: (d[lag]*lag/(run||1)); }
+  let best=-1; for(let lag=minLag;lag<=maxLag;lag++){ if(cm[lag]<0.15){ while(lag+1<=maxLag && cm[lag+1]<cm[lag]) lag++; best=lag; break; } }
+  if(best<0){ let mv=1e9; for(let lag=minLag;lag<=maxLag;lag++) if(cm[lag]<mv){mv=cm[lag];best=lag;} if(mv>0.35) return {rms,f:0}; }
+  const x0=cm[best-1]||cm[best], x2=cm[best+1]||cm[best], x1=cm[best]; const den=x0+x2-2*x1; const shift= den? (x0-x2)/(2*den):0;
+  return {rms, f: sr/(best+shift)};
+}
+function sampleMic(){
+  analyser.getFloatTimeDomainData(micBuf);
+  const {rms,f}=detectPitch(micBuf, AC.sampleRate);
+  const lvl=Math.min(1,rms*8); $("micLvl").style.width=(lvl*100)+"%";
+  const t=AC.currentTime - S.latency/1000 - (analyser.fftSize/AC.sampleRate)/2 - startAt;
+  micFrames.push({t, rms, m: f? 69+12*Math.log2(f/440) : null});
+}
+const NN=["Do","Do#","Re","Mi♭","Mi","Fa","Fa#","Sol","Sol#","La","Si♭","Si"];
+function evaluate(){
+  const [a,b]=runRange; const notes=PARTS[ME].notes.filter(x=>x[3]>=a&&x[3]<=b);
+  if(!notes.length){ $("status").textContent="En este tramo no tocas: elige otro."; return; }
+  const per={}; const fb=[]; let pts=0;
+  const noise = micFrames.filter(f=>f.t<-0.1).map(f=>f.rms); const floor = noise.length? noise.sort((x,y)=>x-y)[Math.floor(noise.length/2)] : 0.01;
+  const thr=Math.max(0.015, floor*2.5);
+  notes.forEach((nt,idx)=>{
+    const [s,d,midi,mn]=nt; const qm=M[mn-1].q0; const t0=S.st[mn]+(s-qm)*spq(mn); const dur=d*spq(mn);
+    const exp=midi+S.trans;
+    const win=micFrames.filter(f=>f.t>=t0-0.15 && f.t<=t0+dur);
+    const core=win.filter(f=>f.t>=t0+dur*0.2 && f.t<=t0+dur*0.85 && f.rms>thr && f.m!=null);
+    let status="ok", msg="";
+    const voiced=win.filter(f=>f.t>=t0 && f.rms>thr).length / Math.max(1,win.filter(f=>f.t>=t0).length);
+    if(core.length<2 || voiced<0.3){ status="bad"; msg=`no se oye la nota (${NN[midi%12]})`; }
+    else{
+      const ms=core.map(f=>f.m).sort((x,y)=>x-y); let med=ms[Math.floor(ms.length/2)];
+      let err=med-exp; if(S.oct){ err=((err%12)+18)%12-6; }
+      if(Math.abs(err)>0.7){ status="bad"; msg=`nota equivocada: toca ${NN[midi%12]}, suena ${NN[((Math.round(med-S.trans))%12+12)%12]}`; }
+      else if(Math.abs(err)>0.35){ status="warn"; msg= err>0? `${NN[midi%12]} un poco alta`:`${NN[midi%12]} un poco baja`; }
+      // onset: only when note follows a rest or a different pitch
+      const prev=notes[idx-1]; const fresh=!prev || prev[2]!==midi || Math.abs((prev[0]+prev[1])-s)>1e-6;
+      if(status!=="bad" && fresh){
+        const tol=Math.max(0.07, Math.min(0.14, dur*0.3));
+        const on=win.find(f=>f.rms>thr && f.m!=null && Math.abs((S.oct? ((f.m-exp)%12+18)%12-6 : f.m-exp))<0.8);
+        if(on){ const e=on.t-t0; if(e< -tol){ status="warn"; msg=`te adelantas (${Math.round(-e*1000)} ms)`; } else if(e>tol){ status="warn"; msg=`entras tarde (${Math.round(e*1000)} ms)`; } }
+      }
+    }
+    pts+= status==="ok"?1: status==="warn"?0.5:0;
+    const rank={ok:0,warn:1,bad:2}; if(!per[mn] || rank[status]>rank[per[mn]]) per[mn]=status;
+    if(status!=="ok") fb.push({mn,status,msg});
+  });
+  S.results=per; draw();
+  const score=Math.round(pts/notes.length*100);
+  $("resCard").style.display="";
+  $("score").textContent=score+"%"; $("scoreBar").style.width=score+"%"; $("scoreBar").style.background= score>=85?"var(--ok)":score>=60?"var(--warn)":"var(--bad)";
+  let hint;
+  if(score>=85 && S.tempo<100) hint=`¡Muy bien! Sube el tempo a ${Math.min(110,S.tempo+10)}%.`;
+  else if(score>=85 && S.phase<PHASES.length-1) hint=`¡Superado a tempo! Pasa a la fase ${S.phase+2}.`;
+  else if(score>=85) hint="¡Sección dominada! Pasa a la siguiente.";
+  else if(score>=60) hint="Casi. Repite; si fallas siempre en el mismo sitio, toca ese compás para hacer bucle ahí.";
+  else hint=`Baja el tempo (prueba ${Math.max(40,S.tempo-10)}%) o trabaja un tramo más corto.`;
+  $("scoreHint").textContent=hint;
+  // group feedback by measure
+  const ul=$("fb"); ul.innerHTML="";
+  const byM={}; fb.forEach(x=>{ (byM[x.mn]=byM[x.mn]||[]).push(x); });
+  Object.keys(byM).map(Number).sort((x,y)=>x-y).forEach(mn=>{ const xs=byM[mn]; const st=xs.some(x=>x.status==="bad")?"bad":"warn";
+    const msgs=[...new Set(xs.map(x=>x.msg))].join("; ");
+    const li=document.createElement("li"); li.className=st; li.innerHTML=`<b>c.${C(mn)}</b> ${msgs}`;
+    li.onclick=()=>{ S.from=Math.max(SECTIONS[S.sec].start,mn-1); S.to=Math.min(SECTIONS[S.sec].end,mn+1); refresh(); };
+    ul.appendChild(li); });
+  if(!fb.length) ul.innerHTML='<li class="ok">Todo limpio en este intento 👏</li>';
+  const key=S.sec+"|"+S.phase; const prev=progress[key];
+  if(!prev || score>prev.best || (score===prev.best && S.tempo>prev.tempo)){ progress[key]={best:score,tempo:S.tempo}; store.set("progress",progress); }
+  $("status").textContent=`Intento evaluado a ${S.tempo}% de tempo.`;
+  refresh();
+}
+
+// ---------- latency calibration ----------
+async function calibrate(){
+  ensureAudio(); const ok=await startMic(); if(!ok){ alertBox("No se pudo abrir el micro."); return; }
+  const n=6, gap=0.8; const t0=AC.currentTime+0.6; for(let k=0;k<n;k++) click(t0+k*gap,true,1);
+  const frames=[]; const end=t0+n*gap+0.5; $("calBtn").textContent="Toca con cada golpe…";
+  await new Promise(res=>{ (function loop(){ analyser.getFloatTimeDomainData(micBuf); const {rms}=detectPitch(micBuf,AC.sampleRate); frames.push({t:AC.currentTime-(analyser.fftSize/AC.sampleRate)/2,rms}); if(AC.currentTime<end) requestAnimationFrame(loop); else res(); })(); });
+  const floor=frames.slice(0,10).reduce((s,f)=>s+f.rms,0)/10; const thr=Math.max(0.02,floor*4);
+  const offs=[]; for(let k=0;k<n;k++){ const c=t0+k*gap; const on=frames.find(f=>f.t>c-0.15&&f.t<c+0.5&&f.rms>thr); if(on) offs.push(on.t-c); }
+  $("calBtn").textContent="Calibrar";
+  if(offs.length<3){ alertBox("No he detectado bien las notas. Prueba más cerca del micro y con auriculares."); return; }
+  offs.sort((x,y)=>x-y); const med=offs[Math.floor(offs.length/2)];
+  S.latency=Math.max(0,Math.min(400,Math.round(med*1000/10)*10)); $("lat").value=S.latency; $("latLbl").textContent=S.latency+" ms"; store.set("lat",S.latency);
+}
+function alertBox(t){ $("status").textContent=t; }
+
+// ---------- mixer ----------
+function buildMixer(){
+  const box=$("mixer"); box.innerHTML="<b>Volumen</b><span class='hint'>(solo afecta a las voces que suenan en la fase actual)</span><span></span>";
+  const mix=mixFor();
+  Object.keys(TIMBRE).forEach(k=>{ const base=PHASES[S.phase].mix[k]||0; const v=S.vol[k]??base;
+    const l=document.createElement("span"); l.textContent=NAMES[k]; const r=document.createElement("input"); r.type="range"; r.min=0; r.max=1; r.step=0.05; r.value=v; r.disabled=!base;
+    const o=document.createElement("span"); o.textContent=base? Math.round(v*100):"–";
+    r.oninput=()=>{ S.vol[k]=+r.value; o.textContent=Math.round(r.value*100); store.set("vol",S.vol); };
+    box.append(l,r,o); });
+}
+
+initUI();
+</script>
+</body>
+</html>
