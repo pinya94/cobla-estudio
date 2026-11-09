@@ -1,0 +1,128 @@
+{
+ "title": "Presentació",
+ "me": "tenor_2",
+ "total_measures": 45,
+ "parts": [
+  {
+   "id": "flabiol",
+   "pdf": "flabiol.pdf",
+   "name": "Flautín",
+   "short": "flautín",
+   "program": 72,
+   "clef": "G",
+   "timbre": "flauta",
+   "role": "melodia"
+  },
+  {
+   "id": "tible",
+   "pdf": "tible.pdf",
+   "name": "Tarota tible",
+   "short": "tible",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tenor_1",
+   "pdf": "tenor_1.pdf",
+   "name": "Tarota tenor 1",
+   "short": "tenor 1",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tenor_2",
+   "pdf": "tenor_2.pdf",
+   "name": "Tarota tenor 2",
+   "short": "tenor 2",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "yo"
+  },
+  {
+   "id": "fagot",
+   "pdf": "fagot.pdf",
+   "name": "Fagot",
+   "short": "fagot",
+   "program": 70,
+   "clef": "F",
+   "timbre": "fagot",
+   "role": "base"
+  },
+  {
+   "id": "trombo",
+   "pdf": "trombo.pdf",
+   "name": "Trombón",
+   "short": "trombón",
+   "program": 57,
+   "clef": "F",
+   "timbre": "metal",
+   "role": "base"
+  }
+ ],
+ "sections": [
+  {
+   "start": 1,
+   "name": "Presentació",
+   "bpm": 100,
+   "beat": 1
+  }
+ ],
+ "overrides": {
+  "tenor_2:27": [
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ],
+   [
+    67,
+    "1/4"
+   ]
+  ]
+ },
+ "composer": "Arr. Marc Solanas"
+}

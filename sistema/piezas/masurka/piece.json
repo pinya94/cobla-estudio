@@ -1,0 +1,90 @@
+{
+ "title": "Masurka Roviretes",
+ "me": "tarota_do",
+ "total_measures": 60,
+ "parts": [
+  {
+   "id": "flabiol",
+   "pdf": "flabiol.pdf",
+   "name": "Flabiol",
+   "short": "flabiol",
+   "program": 72,
+   "clef": "G",
+   "timbre": "flauta",
+   "role": "melodia"
+  },
+  {
+   "id": "sac",
+   "pdf": "sac.pdf",
+   "name": "Sac de gemecs",
+   "short": "sac",
+   "program": 109,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "melodia"
+  },
+  {
+   "id": "tarota_do",
+   "pdf": "tarota_do.pdf",
+   "name": "Tarota Do",
+   "short": "tarota Do",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "yo"
+  },
+  {
+   "id": "tarota_fa",
+   "pdf": "tarota_fa.pdf",
+   "name": "Tarota Fa",
+   "short": "tarota Fa",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "fagot",
+   "pdf": "fagot.pdf",
+   "name": "Fagot",
+   "short": "fagot",
+   "program": 70,
+   "clef": "F",
+   "timbre": "fagot",
+   "role": "base"
+  },
+  {
+   "id": "trombo",
+   "pdf": "trombo.pdf",
+   "name": "Trombó",
+   "short": "trombón",
+   "program": 57,
+   "clef": "F",
+   "timbre": "metal",
+   "role": "base"
+  }
+ ],
+ "sections": [
+  {
+   "start": 1,
+   "name": "Inicio",
+   "bpm": 130,
+   "beat": 1
+  },
+  {
+   "start": 21,
+   "name": "Segunda parte",
+   "bpm": 130,
+   "beat": 1
+  },
+  {
+   "start": 41,
+   "name": "Trío (tras el Fine)",
+   "bpm": 130,
+   "beat": 1
+  }
+ ],
+ "overrides": {},
+ "composer": "Magí Castro",
+ "subtitle": "Cobla La Mitja Lluna"
+}

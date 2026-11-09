@@ -1,0 +1,95 @@
+{
+ "title": "Jota Foguejada",
+ "me": "tenor",
+ "total_measures": 103,
+ "parts": [
+  {
+   "id": "flabiol",
+   "pdf": "flabiol.pdf",
+   "name": "Flabiol",
+   "short": "flabiol",
+   "program": 72,
+   "clef": "G",
+   "timbre": "flauta",
+   "role": "melodia"
+  },
+  {
+   "id": "tible",
+   "pdf": "tible.pdf",
+   "name": "Tarota tible",
+   "short": "tible",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "companeros"
+  },
+  {
+   "id": "tenor",
+   "pdf": "tenor.pdf",
+   "name": "Tarota tenor",
+   "short": "tenor",
+   "program": 68,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "yo"
+  },
+  {
+   "id": "sac",
+   "pdf": "sac.pdf",
+   "name": "Sac de gemecs",
+   "short": "sac",
+   "program": 109,
+   "clef": "G",
+   "timbre": "lengueta",
+   "role": "melodia"
+  },
+  {
+   "id": "fagot",
+   "pdf": "fagot.pdf",
+   "name": "Fagot",
+   "short": "fagot",
+   "program": 70,
+   "clef": "F",
+   "timbre": "fagot",
+   "role": "base"
+  },
+  {
+   "id": "trombo",
+   "pdf": "trombo.pdf",
+   "name": "Trombón",
+   "short": "trombón",
+   "program": 57,
+   "clef": "F",
+   "timbre": "metal",
+   "role": "base"
+  }
+ ],
+ "sections": [
+  {
+   "start": 1,
+   "name": "A",
+   "bpm": 200,
+   "beat": 1
+  },
+  {
+   "start": 20,
+   "name": "B",
+   "bpm": 150,
+   "beat": 1
+  },
+  {
+   "start": 47,
+   "name": "C",
+   "bpm": 200,
+   "beat": 1
+  },
+  {
+   "start": 85,
+   "name": "A (final)",
+   "bpm": 200,
+   "beat": 1
+  }
+ ],
+ "overrides": {},
+ "composer": "Arr. Esteve Bou"
+}
